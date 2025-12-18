@@ -1,13 +1,60 @@
 import { useParams } from "react-router-dom";
 import { Link } from "react-router-dom";
-import albums from "../data/albums";
+import { useState, useEffect } from "react";
+import { albumsAPI } from "../api/api";
+import rahmanImg from "../assets/languages/rahman.jpg";
+import hindiImg from "../assets/languages/hindi.jpg";
+import englishImg from "../assets/languages/english.jpg";
+import koreanImg from "../assets/languages/korean.jpg";
+import rajaImg from "../assets/languages/raja.jpg";
+import badshahImg from "../assets/languages/badshah.jpg";
+import eminemImg from "../assets/languages/eminem.jpg";
+import queenImg from "../assets/languages/queen.jpg";
+import davisImg from "../assets/languages/davis.jpg";
+import ostImg from "../assets/languages/ost.jpg";
+
+const getImageByArtist = (artist, language) => {
+  const artistImages = {
+    "A.R. Rahman": rahmanImg,
+    "Ilaiyaraaja": rajaImg,
+    "Badshah": badshahImg,
+    "Eminem": eminemImg,
+    "Queen": queenImg,
+    "Miles Davis": davisImg,
+    "K-Drama OST": ostImg
+  };
+  
+  const languageImages = {
+    tamil: rahmanImg,
+    hindi: hindiImg,
+    english: englishImg,
+    korean: koreanImg
+  };
+  
+  return artistImages[artist] || languageImages[language] || englishImg;
+};
 
 export default function Genres() {
   const { language } = useParams();
-  const languageAlbums = albums.filter(a => a.language === language);
+  const [albums, setAlbums] = useState([]);
+  const [loading, setLoading] = useState(true);
+  
+  useEffect(() => {
+    const fetchAlbums = async () => {
+      try {
+        const data = await albumsAPI.getAll(language);
+        setAlbums(data);
+      } catch (error) {
+        console.error('Error fetching albums:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchAlbums();
+  }, [language]);
   
   // Get unique genres for this language
-  const genres = [...new Set(languageAlbums.map(album => album.genre))];
+  const genres = [...new Set(albums.map(album => album.genre))];
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
@@ -21,17 +68,22 @@ export default function Genres() {
           </p>
         </div>
 
-        {genres.length > 0 ? (
+        {loading ? (
+          <div className="text-center py-16">
+            <div className="text-4xl mb-4">🎵</div>
+            <p className="text-gray-600">Loading genres...</p>
+          </div>
+        ) : genres.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {genres.map(genre => {
-              const genreAlbums = languageAlbums.filter(album => album.genre === genre);
+              const genreAlbums = albums.filter(album => album.genre === genre);
               const sampleAlbum = genreAlbums[0];
               
               return (
                 <div key={genre} className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
                   <div className="relative">
                     <img
-                      src={sampleAlbum.coverImage}
+                      src={getImageByArtist(sampleAlbum.artist, sampleAlbum.language)}
                       alt={genre}
                       className="w-full h-48 object-cover"
                     />
