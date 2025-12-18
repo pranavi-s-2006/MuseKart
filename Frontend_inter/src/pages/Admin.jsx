@@ -20,16 +20,16 @@ const getImageByArtist = (artist, language) => {
     "Eminem": eminemImg,
     "Queen": queenImg,
     "Miles Davis": davisImg,
-    "K-Drama OST": ostImg
+    "K-Drama OST": ostImg,
   };
-  
+
   const languageImages = {
     tamil: rahmanImg,
     hindi: hindiImg,
     english: englishImg,
-    korean: koreanImg
+    korean: koreanImg,
   };
-  
+
   return artistImages[artist] || languageImages[language] || englishImg;
 };
 
@@ -42,9 +42,8 @@ export default function Admin() {
     price: "",
     coverImage: "",
     tracks: "",
-    releaseYear: ""
+    releaseYear: "",
   });
-  
   const [albumList, setAlbumList] = useState([]);
   const [loading, setLoading] = useState(false);
   const { user } = useAuth();
@@ -52,10 +51,7 @@ export default function Admin() {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   useEffect(() => {
@@ -67,30 +63,29 @@ export default function Admin() {
       const albums = await albumsAPI.getAll();
       setAlbumList(albums);
     } catch (error) {
-      console.error('Error fetching albums:', error);
+      console.error("Error fetching albums:", error);
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    
+
     const newAlbum = {
       title: formData.title,
       artist: formData.artist,
       language: formData.language.toLowerCase(),
       genre: formData.genre,
       price: Number(formData.price),
-      coverImage: formData.coverImage || getImageByArtist(formData.artist, formData.language),
-      tracks: formData.tracks.split(",").map(track => track.trim()),
-      releaseYear: Number(formData.releaseYear)
+      coverImage:
+        formData.coverImage || getImageByArtist(formData.artist, formData.language),
+      tracks: formData.tracks.split(",").map((track) => track.trim()),
+      releaseYear: Number(formData.releaseYear),
     };
-    
+
     try {
       await albumsAPI.create(newAlbum, user.token);
-      await fetchAlbums(); // Refresh list
-      
-      // Reset form
+      await fetchAlbums();
       setFormData({
         title: "",
         artist: "",
@@ -99,9 +94,8 @@ export default function Admin() {
         price: "",
         coverImage: "",
         tracks: "",
-        releaseYear: ""
+        releaseYear: "",
       });
-      
       setShowForm(false);
       alert("Album added successfully!");
     } catch (error) {
@@ -115,7 +109,7 @@ export default function Admin() {
     if (window.confirm("Are you sure you want to delete this album?")) {
       try {
         await albumsAPI.delete(id, user.token);
-        await fetchAlbums(); // Refresh list
+        await fetchAlbums();
         alert("Album deleted successfully!");
       } catch (error) {
         alert("Error deleting album. Please try again.");
@@ -127,6 +121,7 @@ export default function Admin() {
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="container mx-auto px-4">
         <div className="max-w-6xl mx-auto">
+          {/* Header */}
           <div className="flex justify-between items-center mb-8">
             <h1 className="text-3xl font-bold text-gray-800">Admin Panel</h1>
             <button
@@ -141,8 +136,11 @@ export default function Admin() {
           {showForm && (
             <div className="bg-white rounded-xl shadow-lg p-6 mb-8">
               <h2 className="text-xl font-bold text-gray-800 mb-6">Add New Album</h2>
-              
-              <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <form
+                onSubmit={handleSubmit}
+                className="grid grid-cols-1 md:grid-cols-2 gap-6"
+              >
+                {/* Album Title */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Album Title *
@@ -157,7 +155,8 @@ export default function Admin() {
                     required
                   />
                 </div>
-                
+
+                {/* Artist */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Artist *
@@ -172,7 +171,8 @@ export default function Admin() {
                     required
                   />
                 </div>
-                
+
+                {/* Language */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Language *
@@ -191,7 +191,8 @@ export default function Admin() {
                     <option value="korean">Korean</option>
                   </select>
                 </div>
-                
+
+                {/* Genre */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Genre *
@@ -206,7 +207,8 @@ export default function Admin() {
                     required
                   />
                 </div>
-                
+
+                {/* Price */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Price (₹) *
@@ -222,7 +224,8 @@ export default function Admin() {
                     required
                   />
                 </div>
-                
+
+                {/* Release Year */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Release Year *
@@ -239,7 +242,8 @@ export default function Admin() {
                     required
                   />
                 </div>
-                
+
+                {/* Cover Image URL */}
                 <div className="md:col-span-2">
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Cover Image URL
@@ -253,7 +257,8 @@ export default function Admin() {
                     placeholder="Enter image URL (optional)"
                   />
                 </div>
-                
+
+                {/* Tracks */}
                 <div className="md:col-span-2">
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Tracks (comma separated) *
@@ -268,7 +273,8 @@ export default function Admin() {
                     required
                   />
                 </div>
-                
+
+                {/* Submit Button */}
                 <div className="md:col-span-2">
                   <button
                     type="submit"
@@ -285,9 +291,11 @@ export default function Admin() {
           {/* Albums List */}
           <div className="bg-white rounded-xl shadow-lg overflow-hidden">
             <div className="px-6 py-4 border-b border-gray-200">
-              <h2 className="text-xl font-bold text-gray-800">Manage Albums ({albumList.length})</h2>
+              <h2 className="text-xl font-bold text-gray-800">
+                Manage Albums ({albumList.length})
+              </h2>
             </div>
-            
+
             <div className="overflow-x-auto">
               <table className="w-full">
                 <thead className="bg-gray-50">
@@ -312,6 +320,7 @@ export default function Admin() {
                     </th>
                   </tr>
                 </thead>
+
                 <tbody className="bg-white divide-y divide-gray-200">
                   {albumList.map((album) => (
                     <tr key={album._id} className="hover:bg-gray-50">
@@ -323,8 +332,12 @@ export default function Admin() {
                             className="w-12 h-12 object-cover rounded-lg mr-4"
                           />
                           <div>
-                            <div className="text-sm font-medium text-gray-900">{album.title}</div>
-                            <div className="text-sm text-gray-500">{album.releaseYear}</div>
+                            <div className="text-sm font-medium text-gray-900">
+                              {album.title}
+                            </div>
+                            <div className="text-sm text-gray-500">
+                              {album.releaseYear}
+                            </div>
                           </div>
                         </div>
                       </td>

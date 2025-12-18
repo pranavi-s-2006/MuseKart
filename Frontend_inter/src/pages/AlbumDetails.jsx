@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { albumsAPI } from "../api/api";
 import { useAuth } from "../context/AuthContext";
 import { useCart } from "../context/CartContext";
+
 import rahmanImg from "../assets/languages/rahman.jpg";
 import hindiImg from "../assets/languages/hindi.jpg";
 import englishImg from "../assets/languages/english.jpg";
@@ -22,16 +23,16 @@ const getImageByArtist = (artist, language) => {
     "Eminem": eminemImg,
     "Queen": queenImg,
     "Miles Davis": davisImg,
-    "K-Drama OST": ostImg
+    "K-Drama OST": ostImg,
   };
-  
+
   const languageImages = {
     tamil: rahmanImg,
     hindi: hindiImg,
     english: englishImg,
-    korean: koreanImg
+    korean: koreanImg,
   };
-  
+
   return artistImages[artist] || languageImages[language] || englishImg;
 };
 
@@ -40,26 +41,28 @@ export default function AlbumDetails() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { addToCart } = useCart();
+
   const [album, setAlbum] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchAlbum = async () => {
-      if (!id || id === 'undefined') {
+      if (!id || id === "undefined") {
         setLoading(false);
         return;
       }
-      
+
       try {
         const data = await albumsAPI.getById(id);
         setAlbum(data);
       } catch (error) {
-        console.error('Error fetching album:', error);
+        console.error("Error fetching album:", error);
         setAlbum(null);
       } finally {
         setLoading(false);
       }
     };
+
     fetchAlbum();
   }, [id]);
 
@@ -80,7 +83,9 @@ export default function AlbumDetails() {
         <div className="text-center">
           <div className="text-6xl mb-4">🎵</div>
           <h2 className="text-2xl font-bold text-gray-700">Album not found</h2>
-          <p className="text-gray-500 mt-2">The album you're looking for doesn't exist.</p>
+          <p className="text-gray-500 mt-2">
+            The album you're looking for doesn't exist.
+          </p>
         </div>
       </div>
     );
@@ -103,6 +108,7 @@ export default function AlbumDetails() {
       <div className="container mx-auto px-4">
         <div className="max-w-4xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden">
           <div className="md:flex">
+            {/* Album Image */}
             <div className="md:w-1/2">
               <img
                 src={getImageByArtist(album.artist, album.language)}
@@ -110,10 +116,13 @@ export default function AlbumDetails() {
                 className="w-full h-96 md:h-full object-cover"
               />
             </div>
-            
+
+            {/* Album Details */}
             <div className="md:w-1/2 p-8">
               <div className="mb-6">
-                <h1 className="text-3xl font-bold text-gray-800 mb-2">{album.title}</h1>
+                <h1 className="text-3xl font-bold text-gray-800 mb-2">
+                  {album.title}
+                </h1>
                 <p className="text-xl text-gray-600 mb-2">by {album.artist}</p>
                 <div className="flex items-center gap-4 mb-4">
                   <span className="bg-purple-100 text-purple-800 px-3 py-1 rounded-full text-sm font-medium">
@@ -122,23 +131,33 @@ export default function AlbumDetails() {
                   <span className="text-gray-500">{album.language}</span>
                   <span className="text-gray-500">{album.releaseYear}</span>
                 </div>
-                <p className="text-3xl font-bold text-green-600 mb-6">₹{album.price}</p>
+                <p className="text-3xl font-bold text-green-600 mb-6">
+                  ₹{album.price}
+                </p>
               </div>
 
+              {/* Track List */}
               <div className="mb-6">
-                <h3 className="text-lg font-semibold text-gray-800 mb-3">Track List</h3>
+                <h3 className="text-lg font-semibold text-gray-800 mb-3">
+                  Track List
+                </h3>
                 <ul className="space-y-2">
-                  {album.tracks && album.tracks.map((track, index) => (
-                    <li key={index} className="flex items-center text-gray-600">
-                      <span className="w-6 h-6 bg-purple-100 text-purple-800 rounded-full flex items-center justify-center text-sm font-medium mr-3">
-                        {index + 1}
-                      </span>
-                      {track}
-                    </li>
-                  ))}
+                  {album.tracks &&
+                    album.tracks.map((track, index) => (
+                      <li
+                        key={index}
+                        className="flex items-center text-gray-600"
+                      >
+                        <span className="w-6 h-6 bg-purple-100 text-purple-800 rounded-full flex items-center justify-center text-sm font-medium mr-3">
+                          {index + 1}
+                        </span>
+                        {track}
+                      </li>
+                    ))}
                 </ul>
               </div>
 
+              {/* Action Buttons */}
               <div className="flex gap-4">
                 <button
                   onClick={handleBuy}
