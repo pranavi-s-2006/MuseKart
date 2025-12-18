@@ -1,4 +1,4 @@
-const API_BASE_URL = 'https://musekart-1.onrender.com';
+const API_BASE_URL = 'https://musekart-1.onrender.com/api';
 
 // Auth API calls
 export const authAPI = {
