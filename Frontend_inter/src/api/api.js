@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://localhost:5000/api';
+const API_BASE_URL = 'https://musekart-1.onrender.com';
 
 // Auth API calls
 export const authAPI = {
