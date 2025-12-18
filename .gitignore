@@ -1,7 +1,0 @@
-node_modules/
-.env
-*.log
-dist/
-build/
-Backend_inter/node_modules/
-Frontend_inter/node_modules/
